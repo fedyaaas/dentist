@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Онлайн-запись — Юлия &amp; Тихон, стоматология на Нахимовском</title>
+  <meta name="description" content="Онлайн-запись к стоматологам Юлии и Тихону Федоровскому: выберите врача, услугу и свободное время. Клиника «Баланс Дент», м. Нахимовский проспект.">
+
+  <!-- Шрифт Manrope с Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Сначала общие стили сайта, потом стили страницы записи -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/booking.css">
+
+  <!-- Скрипты строго по порядку: настройки → связь с таблицей → логика записи.
+       defer = скрипт выполнится после того, как браузер построит всю страницу. -->
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/booking.js" defer></script>
+</head>
+<body data-page="booking">
+
+  <!-- Ссылка для тех, кто ходит по сайту клавиатурой: сразу к содержимому -->
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+  <!-- ================= ШАПКА (упрощённая: логотип и ссылка на главную) ================= -->
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="logo" href="index.html" aria-label="Юлия и Тихон — на главную">
+        <svg class="logo__icon" viewBox="0 0 32 32" width="36" height="36" aria-hidden="true" focusable="false">
+          <rect width="32" height="32" rx="10" fill="#1663C7"/>
+          <path d="M11.2 7.5c-2.6 0-4.2 2-4.2 4.6 0 2.3.9 3.6 1.5 5.6.6 2 .8 4.2 1.4 5.9.4 1.1.9 1.9 1.7 1.9 1.2 0 1.5-1.6 1.8-3.4.3-1.8.7-3.4 2.6-3.4s2.3 1.6 2.6 3.4c.3 1.8.6 3.4 1.8 3.4.8 0 1.3-.8 1.7-1.9.6-1.7.8-3.9 1.4-5.9.6-2 1.5-3.3 1.5-5.6 0-2.6-1.6-4.6-4.2-4.6-1.9 0-3 .9-4.8.9s-2.9-.9-4.8-.9z" fill="#FFFFFF"/>
+        </svg>
+        <span class="logo__text">
+          <span class="logo__name">Юлия &amp; Тихон</span>
+          <span class="logo__sub">на базе клиники «Баланс Дент»</span>
+        </span>
+      </a>
+
+      <a class="booking-back" href="index.html">← На главную</a>
+    </div>
+  </header>
+
+  <main id="main" class="booking-page">
+    <div class="container">
+
+      <!-- Заголовок страницы -->
+      <div class="booking-intro">
+        <p class="eyebrow">Онлайн-запись</p>
+        <h1 class="booking-intro__title">Запишитесь на приём</h1>
+        <p class="booking-intro__text">Юлия и Тихон принимают вместе. Выберите услугу и удобное свободное время. Мы подтвердим запись в Telegram или по телефону.</p>
+      </div>
+
+      <!-- ============ ЭКРАН ЗАПИСИ (шаги + сводка) ============ -->
+      <div class="booking" id="booking-screen">
+
+        <!-- Левая колонка: шаги по порядку -->
+        <div class="booking__steps">
+
+
+          <!-- Плашка «Врач рекомендовал: …» (показывает js, если в ссылке есть ?plan=) -->
+          <p class="plan-badge" id="plan-badge" role="status" hidden></p>
+
+          <!-- Шаг 1. Услуга -->
+          <section class="step" aria-labelledby="step-service-title">
+            <h2 class="step__title" id="step-service-title"><span class="step__num" aria-hidden="true">1</span>Услуга</h2>
+            <label class="field__label" for="service-select">Что нужно сделать</label>
+            <select class="field__input" id="service-select" aria-describedby="service-hint service-note" disabled>
+              <option value="">Загружаем список услуг…</option>
+            </select>
+            <p class="field__hint" id="service-hint">Первая профессиональная гигиена — со скидкой 15%.</p>
+            <!-- Цен в списке нет намеренно: стоимость зависит от случая -->
+            <p class="field__hint service-note" id="service-note">Стоимость зависит от сложности случая и уточняется на консультации. Ориентир — <a href="index.html#services">в прайсе на главной</a>.</p>
+          </section>
+
+          <!-- Шаг 2. Дата -->
+          <section class="step" aria-labelledby="step-date-title">
+            <h2 class="step__title" id="step-date-title"><span class="step__num" aria-hidden="true">2</span>Дата</h2>
+            <!-- Лента дней. Пока врач не выбран — подсказка -->
+            <div class="date-strip" id="date-list" role="group" aria-labelledby="step-date-title">
+              <p class="step__placeholder">Загружаем расписание…</p>
+            </div>
+          </section>
+
+          <!-- Шаг 3. Время -->
+          <section class="step" id="step-time" aria-labelledby="step-time-title" tabindex="-1">
+            <h2 class="step__title" id="step-time-title"><span class="step__num" aria-hidden="true">3</span>Время</h2>
+            <!-- Сообщение «Это время только что заняли» и т.п. (aria-live — читалка его озвучит) -->
+            <div class="notice notice--warn" id="time-notice" role="alert" hidden></div>
+            <div class="time-grid" id="time-list" role="group" aria-labelledby="step-time-title" aria-live="polite">
+              <p class="step__placeholder">Загружаем расписание…</p>
+            </div>
+          </section>
+
+          <!-- Шаг 4. Контакты -->
+          <section class="step" aria-labelledby="step-contacts-title">
+            <h2 class="step__title" id="step-contacts-title"><span class="step__num" aria-hidden="true">4</span>Контакты</h2>
+
+            <!-- Плашка демо-режима (показывает js, если CONFIG.API_URL пустой) -->
+            <p class="demo-badge" id="demo-badge" hidden>Демо-режим: запись никуда не отправится</p>
+
+            <!-- novalidate: проверку делаем сами, чтобы ошибки были понятными и на русском -->
+            <form class="contact-form" id="contact-form" novalidate>
+
+              <div class="field">
+                <label class="field__label" for="f-name">Имя <span class="field__req" aria-hidden="true">*</span></label>
+                <input class="field__input" id="f-name" name="name" type="text" autocomplete="name"
+                       maxlength="80" required aria-describedby="f-name-error">
+                <p class="field__error" id="f-name-error"></p>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="f-phone">Телефон <span class="field__req" aria-hidden="true">*</span></label>
+                <input class="field__input" id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel"
+                       maxlength="20" placeholder="+7 900 000-00-00" required aria-describedby="f-phone-hint f-phone-error">
+                <p class="field__hint" id="f-phone-hint">Российский номер: +7 или 8 и 10 цифр.</p>
+                <p class="field__error" id="f-phone-error"></p>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="f-telegram">Telegram <span class="field__opt">(необязательно)</span></label>
+                <input class="field__input" id="f-telegram" name="telegram" type="text" autocomplete="off"
+                       maxlength="40" placeholder="@username" aria-describedby="f-telegram-hint f-telegram-error">
+                <p class="field__hint" id="f-telegram-hint">Удобнее всего подтвердить запись в Telegram.</p>
+                <p class="field__error" id="f-telegram-error"></p>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="f-comment">Комментарий <span class="field__opt">(необязательно)</span></label>
+                <textarea class="field__input field__input--area" id="f-comment" name="comment" rows="3"
+                          maxlength="500" aria-describedby="f-comment-error"
+                          placeholder="Например: болит зуб слева, нужен снимок"></textarea>
+                <p class="field__error" id="f-comment-error"></p>
+              </div>
+
+              <!-- Ловушка для ботов: человек это поле не видит и не заполняет.
+                   Если оно пришло заполненным — сервер молча ничего не запишет. -->
+              <div class="hp-field" aria-hidden="true">
+                <label for="f-website">Сайт</label>
+                <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+              </div>
+
+              <div class="field field--check">
+                <input class="check" id="f-consent" name="consent" type="checkbox" required aria-describedby="f-consent-error">
+                <label for="f-consent">Согласен(на) на обработку персональных данных для записи на приём</label>
+                <p class="field__error" id="f-consent-error"></p>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <!-- Правая колонка (на телефоне — липкая панель снизу): сводка и кнопка -->
+        <aside class="summary" aria-labelledby="summary-title">
+          <h2 class="summary__title" id="summary-title">Ваша запись</h2>
+          <p class="summary__team">Принимают: Юлия и Тихон</p>
+
+          <!-- Подробная сводка (на телефоне скрыта, вместо неё — короткая строка) -->
+          <dl class="summary__list">
+                        <div class="summary__row"><dt>Услуга</dt><dd id="sum-service">не выбрана</dd></div>
+            <div class="summary__row"><dt>Дата и время</dt><dd id="sum-datetime">не выбраны</dd></div>
+          </dl>
+          <p class="summary__short" id="sum-short">Выберите услугу, дату и время</p>
+
+          <!-- form="contact-form": кнопка стоит вне формы, но отправляет именно её -->
+          <button class="btn summary__submit" id="submit-btn" type="submit" form="contact-form" disabled
+                  aria-describedby="submit-hint">Записаться</button>
+          <p class="summary__hint" id="submit-hint" aria-live="polite">Выберите услугу, дату и время</p>
+
+          <!-- Общая ошибка отправки (не slot_taken) -->
+          <div class="notice notice--error" id="submit-error" role="alert" hidden></div>
+        </aside>
+      </div>
+
+      <!-- ============ ЭКРАН УСПЕХА (показывается после записи) ============ -->
+      <section class="success" id="success-screen" hidden aria-labelledby="success-title">
+        <div class="success__icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="56" height="56" focusable="false">
+            <circle cx="24" cy="24" r="22" fill="currentColor" opacity=".12"/>
+            <path d="M14 24.5l7 7 13-14" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2 class="success__title" id="success-title" tabindex="-1">Вы записаны!</h2>
+        <p class="success__when" id="success-when"></p>
+        <p class="success__team">Принимают: Юлия и Тихон</p>
+        <p class="success__service" id="success-service"></p>
+        <p class="success__text">Подтвердим запись в Telegram или по телефону.</p>
+        <p class="success__text success__address">Клиника «Баланс Дент», Москва, ул. Сивашская, 7, корп. 1 — 5 минут от м. Нахимовский проспект.</p>
+        <p class="demo-badge" id="success-demo" hidden>Демо-режим: запись никуда не отправилась</p>
+        <div class="success__actions">
+          <button class="btn" id="ics-btn" type="button">Добавить в календарь</button>
+          <a class="btn btn--ghost" href="index.html">На главную</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ================= ПОДВАЛ ================= -->
+  <footer class="site-footer" id="contacts">
+    <div class="container site-footer__grid">
+
+      <!-- Адрес -->
+      <div class="site-footer__col">
+        <h2 class="site-footer__title">Как нас найти</h2>
+        <address class="site-footer__address">
+          Клиника «Баланс Дент»<br>
+          Москва, ул. Сивашская, 7, корп. 1<br>
+          5 минут пешком от м. Нахимовский проспект
+        </address>
+      </div>
+
+      <!-- Мессенджеры -->
+      <div class="site-footer__col">
+        <h2 class="site-footer__title">Написать врачу</h2>
+        <ul class="site-footer__links">
+          <li>Юлия:
+            <a href="https://t.me/julia10mdl" target="_blank" rel="noopener">Telegram</a>,
+            <a href="https://wa.me/79621217272" target="_blank" rel="noopener">WhatsApp</a>
+          </li>
+          <li>Тихон:
+            <a href="https://t.me/tikhonfedorovsky" target="_blank" rel="noopener">Telegram</a>,
+            <a href="https://wa.me/79819425007" target="_blank" rel="noopener">WhatsApp</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container site-footer__bottom">
+      <span>© 2026 Юлия &amp; Тихон</span>
+      <a href="admin/">Вход для персонала</a>
+    </div>
+  </footer>
+
+</body>
+</html>

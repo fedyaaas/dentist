@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Юлия &amp; Тихон — стоматология на Нахимовском</title>
+  <meta name="description" content="Стоматологи Юлия и Тихон Федоровский: профессиональная гигиена, лечение кариеса, брекеты, коронки. Клиника «Баланс Дент», 5 минут от м. Нахимовский проспект. Онлайн-запись.">
+
+  <!-- Шрифт Manrope с Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Общие стили сайта -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Скрипты: сначала настройки, потом связь с таблицей, потом логика главной -->
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body data-page="home">
+
+  <!-- Ссылка для тех, кто ходит по сайту клавиатурой: сразу к содержимому -->
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+  <!-- ================= ШАПКА (копируется на все публичные страницы) ================= -->
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="logo" href="./" aria-label="Юлия и Тихон — на главную">
+        <svg class="logo__icon" viewBox="0 0 32 32" width="36" height="36" aria-hidden="true" focusable="false">
+          <rect width="32" height="32" rx="10" fill="#1663C7"/>
+          <path d="M11.2 7.5c-2.6 0-4.2 2-4.2 4.6 0 2.3.9 3.6 1.5 5.6.6 2 .8 4.2 1.4 5.9.4 1.1.9 1.9 1.7 1.9 1.2 0 1.5-1.6 1.8-3.4.3-1.8.7-3.4 2.6-3.4s2.3 1.6 2.6 3.4c.3 1.8.6 3.4 1.8 3.4.8 0 1.3-.8 1.7-1.9.6-1.7.8-3.9 1.4-5.9.6-2 1.5-3.3 1.5-5.6 0-2.6-1.6-4.6-4.2-4.6-1.9 0-3 .9-4.8.9s-2.9-.9-4.8-.9z" fill="#FFFFFF"/>
+        </svg>
+        <span class="logo__text">
+          <span class="logo__name">Юлия &amp; Тихон</span>
+          <span class="logo__sub">на базе клиники «Баланс Дент»</span>
+        </span>
+      </a>
+
+      <!-- Кнопка-бургер: видна только на узких экранах -->
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Открыть меню">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+          <path class="nav-toggle__open" d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path class="nav-toggle__close" d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Основное меню">
+        <ul class="site-nav__list">
+          <li><a href="./#doctors">Врачи</a></li>
+          <li><a href="./#services">Услуги и цены</a></li>
+          <li><a href="./#contacts">Контакты</a></li>
+        </ul>
+        <a class="btn site-nav__cta" href="booking.html">Записаться</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ================= HERO: первый экран ================= -->
+    <section class="hero">
+      <div class="container hero__inner">
+        <div class="hero__text">
+          <span class="chip chip--accent">Первая гигиена со скидкой 15%</span>
+          <h1 class="hero__title">Здоровая улыбка — без&nbsp;спешки и&nbsp;страха</h1>
+          <p class="hero__lead">
+            Два врача, которые ведут вас лично: от первой консультации до контрольного визита.
+            Объясняем каждый шаг, работаем бережно и записываем на удобное время онлайн.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--lg" href="booking.html">Выбрать время</a>
+            <a class="btn btn--ghost btn--lg" href="#services">Смотреть цены</a>
+          </div>
+
+          <!-- Три коротких факта -->
+          <ul class="facts">
+            <li class="facts__item">
+              <span class="facts__num">60 мин</span>
+              <span class="facts__label">гигиена под ключ</span>
+            </li>
+            <li class="facts__item">
+              <span class="facts__num">5 мин</span>
+              <span class="facts__label">от метро</span>
+            </li>
+            <li class="facts__item">
+              <span class="facts__num">24/7</span>
+              <span class="facts__label">отвечаем в мессенджерах</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Общее фото Юлии и Тихона (файл img/team.jpg) -->
+        <img class="hero__media" src="img/team.jpg" alt="Врачи Юлия и Тихон" width="1100" height="1350">
+
+      </div>
+    </section>
+
+    <!-- ================= ВРАЧИ ================= -->
+    <section class="section" id="doctors" aria-labelledby="doctors-title">
+      <div class="container">
+        <p class="eyebrow">Команда</p>
+        <h2 class="section-title" id="doctors-title">Врачи</h2>
+        <!-- Карточки рисует js/main.js из массива DOCTORS (js/config.js) -->
+        <div class="doctors" id="doctors-list"></div>
+
+        <!-- Общая запись к команде: ближайшее время подставит main.js -->
+        <div class="team-booking card">
+          <p class="doctor__next" aria-live="polite">
+            Ближайшее свободное время: <strong class="doctor__next-value" id="team-next">загружаем…</strong>
+          </p>
+          <a class="btn btn--lg" href="booking.html">Записаться на приём</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= УСЛУГИ И ЦЕНЫ ================= -->
+    <section class="section section--surface" id="services" aria-labelledby="services-title">
+      <div class="container">
+        <p class="eyebrow">Прайс</p>
+        <h2 class="section-title" id="services-title">Услуги и цены</h2>
+        <p class="section-lead">Указана минимальная стоимость. Итоговая цена зависит от сложности случая и называется после осмотра на консультации.</p>
+
+        <!-- Вкладки-фильтры по направлениям (кнопки создаёт main.js) -->
+        <div class="tabs" id="services-tabs" role="group" aria-label="Фильтр по направлениям"></div>
+
+        <!-- Список услуг -->
+        <div class="price card" id="services-list" aria-live="polite">
+          <p class="price__status">Загружаем прайс…</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ЧТО ВХОДИТ В ГИГИЕНУ ================= -->
+    <section class="section" aria-labelledby="hygiene-title">
+      <div class="container">
+        <p class="eyebrow">Профессиональная гигиена</p>
+        <h2 class="section-title" id="hygiene-title">Что входит в профессиональную гигиену</h2>
+        <p class="section-lead">Около часа в кресле — и зубы чистые там, куда не достаёт щётка. Вот что происходит по шагам.</p>
+
+        <ol class="steps">
+          <li class="steps__item card">
+            <span class="steps__num" aria-hidden="true">1</span>
+            <h3 class="steps__title">Индикатор налёта</h3>
+            <p>Окрашиваем налёт безопасным раствором, чтобы было видно, где он прячется, и ничего не пропустить.</p>
+          </li>
+          <li class="steps__item card">
+            <span class="steps__num" aria-hidden="true">2</span>
+            <h3 class="steps__title">Air Flow</h3>
+            <p>Струя воды, воздуха и мягкого порошка снимает мягкий налёт и пигмент от кофе и чая.</p>
+          </li>
+          <li class="steps__item card">
+            <span class="steps__num" aria-hidden="true">3</span>
+            <h3 class="steps__title">Ультразвук</h3>
+            <p>Аккуратно убираем твёрдый зубной камень, в том числе под краем десны.</p>
+          </li>
+          <li class="steps__item card">
+            <span class="steps__num" aria-hidden="true">4</span>
+            <h3 class="steps__title">Полировка</h3>
+            <p>Делаем поверхность гладкой — так налёт медленнее нарастает снова.</p>
+          </li>
+          <li class="steps__item card">
+            <span class="steps__num" aria-hidden="true">5</span>
+            <h3 class="steps__title">Фторирование</h3>
+            <p>Покрываем эмаль фторсодержащим составом: он укрепляет её и снижает чувствительность.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ================= CTA: тёмная полоса с призывом ================= -->
+    <section class="cta" aria-labelledby="cta-title">
+      <div class="container cta__inner">
+        <div>
+          <h2 class="cta__title" id="cta-title">Выберите удобное время онлайн</h2>
+          <p class="cta__text">Свободные окна обоих врачей на две недели вперёд. Подтвердим запись в мессенджере.</p>
+        </div>
+        <a class="btn btn--light btn--lg" href="booking.html">Записаться онлайн</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= ПОДВАЛ (копируется на все публичные страницы) ================= -->
+  <footer class="site-footer" id="contacts">
+    <div class="container site-footer__grid">
+
+      <!-- Адрес -->
+      <div class="site-footer__col">
+        <h2 class="site-footer__title">Как нас найти</h2>
+        <address class="site-footer__address">
+          Клиника «Баланс Дент»<br>
+          Москва, ул. Сивашская, 7, корп. 1<br>
+          5 минут пешком от м. Нахимовский проспект
+        </address>
+      </div>
+
+      <!-- Мессенджеры -->
+      <div class="site-footer__col">
+        <h2 class="site-footer__title">Написать врачу</h2>
+        <ul class="site-footer__links">
+          <li>Юлия:
+            <a href="https://t.me/julia10mdl" target="_blank" rel="noopener">Telegram</a>,
+            <a href="https://wa.me/79621217272" target="_blank" rel="noopener">WhatsApp</a>
+          </li>
+          <li>Тихон:
+            <a href="https://t.me/tikhonfedorovsky" target="_blank" rel="noopener">Telegram</a>,
+            <a href="https://wa.me/79819425007" target="_blank" rel="noopener">WhatsApp</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Заглушка карты: без iframe, ссылка на Яндекс Карты -->
+      <a class="map-stub" href="https://yandex.ru/maps/?text=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0%2C%20%D1%83%D0%BB.%20%D0%A1%D0%B8%D0%B2%D0%B0%D1%88%D1%81%D0%BA%D0%B0%D1%8F%2C%207%20%D0%BA1" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false">
+          <path d="M12 22s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="12" cy="10" r="2.5" fill="currentColor"/>
+        </svg>
+        <span>Открыть на карте</span>
+      </a>
+    </div>
+
+    <div class="container site-footer__bottom">
+      <span>© 2026 Юлия &amp; Тихон</span>
+      <a href="admin/">Вход для персонала</a>
+    </div>
+  </footer>
+
+</body>
+</html>

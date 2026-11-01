@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Служебная страница: поисковикам не показываем -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Кабинет персонала</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin">
+
+  <!-- Плашка демо-режима (показывается из admin.js, если API_URL пустой) -->
+  <div class="admin-demo" id="demoBar" hidden>
+    Демо-режим: пароль demo, данные выдуманы
+  </div>
+
+  <!-- ================= Экран входа ================= -->
+  <main class="admin-login" id="loginScreen">
+    <form class="admin-login__card" id="loginForm" novalidate>
+      <a class="admin-login__back" href="../">&larr; На сайт</a>
+      <h1 class="admin-login__title">Кабинет персонала</h1>
+      <p class="admin-login__hint">Введите пароль, чтобы открыть записи и учёт.</p>
+
+      <div class="field">
+        <label for="loginPassword">Пароль</label>
+        <input type="password" id="loginPassword" name="password" autocomplete="current-password" required>
+      </div>
+
+      <p class="admin-msg admin-msg--error" id="loginError" role="alert" hidden></p>
+
+      <button type="submit" class="btn admin-btn-wide" id="loginBtn">Войти</button>
+    </form>
+  </main>
+
+  <!-- ================= Рабочая область (после входа) ================= -->
+  <div class="admin-app" id="appScreen" hidden>
+
+    <!-- Боковое меню (на телефоне — горизонтальная полоса сверху) -->
+    <aside class="admin-side">
+      <div class="admin-side__brand">Кабинет</div>
+      <nav class="admin-nav" aria-label="Разделы">
+        <button type="button" class="admin-nav__item" data-tab="appointments">Онлайн-запись</button>
+        <button type="button" class="admin-nav__item" data-tab="slots">Окна приёма</button>
+        <button type="button" class="admin-nav__item" data-tab="visits">Визиты</button>
+        <button type="button" class="admin-nav__item" data-tab="finance">Финансы</button>
+        <button type="button" class="admin-nav__item" data-tab="patients">Пациенты</button>
+      </nav>
+      <div class="admin-side__foot">
+        <a class="admin-link" id="sheetLink" href="#" target="_blank" rel="noopener" hidden>Открыть таблицу</a>
+        <a class="admin-link" href="../">На сайт</a>
+        <button type="button" class="btn btn--ghost admin-logout" id="logoutBtn">Выйти</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <!-- Общее сообщение об ошибке/успехе -->
+      <p class="admin-msg" id="globalMsg" role="status" hidden></p>
+
+      <!-- ---------- Онлайн-запись ---------- -->
+      <section class="admin-panel" data-panel="appointments" hidden>
+        <header class="admin-panel__head">
+          <h2>Онлайн-запись</h2>
+          <button type="button" class="btn btn--ghost admin-btn-sm" data-reload="appointments">Обновить</button>
+        </header>
+        <p class="admin-note">Новые заявки подсвечены. Меняйте статус прямо в таблице: «отменена» освобождает время на сайте.</p>
+        <div class="admin-table-wrap" id="appointmentsTable"></div>
+      </section>
+
+      <!-- ---------- Окна приёма ---------- -->
+      <section class="admin-panel" data-panel="slots" hidden>
+        <header class="admin-panel__head"><h2>Окна приёма</h2></header>
+        <form class="admin-form" id="slotsForm" novalidate>
+          <div class="field">
+            <label for="slotDate">Дата</label>
+            <input type="date" id="slotDate" name="date" required>
+          </div>
+          <div class="field">
+            <label for="slotStart">Начало</label>
+            <input type="time" id="slotStart" name="start" value="15:00" step="300" required>
+          </div>
+          <div class="field">
+            <label for="slotEnd">Конец</label>
+            <input type="time" id="slotEnd" name="end" value="20:00" step="300" required>
+          </div>
+          <div class="field">
+            <label for="slotStep">Шаг</label>
+            <select id="slotStep" name="step">
+              <option value="30">30 мин</option>
+              <option value="60" selected>60 мин</option>
+              <option value="90">90 мин</option>
+              <option value="120">120 мин</option>
+            </select>
+          </div>
+          <div class="field field--wide">
+            <label for="slotComment">Комментарий (необязательно)</label>
+            <input type="text" id="slotComment" name="comment" maxlength="200">
+          </div>
+          <p class="admin-preview field--wide" id="slotPreview" aria-live="polite"></p>
+          <div class="admin-form__actions field--wide">
+            <button type="submit" class="btn" id="slotsSubmit">Добавить окна</button>
+            <span class="admin-progress" id="slotsProgress" aria-live="polite"></span>
+          </div>
+        </form>
+        <p class="admin-note">
+          Юлия и Тихон принимают вместе, поэтому окно общее — врача выбирать не нужно.
+          Окна можно вписывать и прямо в лист «Окна» таблицы: одна строка — одно время
+          (Дата, Время вида 15:00; колонку «Врач» можно оставить пустой). Последнее окно
+          начинается не позже, чем за шаг до конца.
+        </p>
+      </section>
+
+      <!-- ---------- Визиты ---------- -->
+      <section class="admin-panel" data-panel="visits" hidden>
+        <header class="admin-panel__head">
+          <h2>Визиты</h2>
+          <button type="button" class="btn btn--ghost admin-btn-sm" data-reload="visits">Обновить</button>
+        </header>
+        <form class="admin-form" id="visitsForm" novalidate>
+          <div class="field field--wide">
+            <label for="visitPatient">Пациент</label>
+            <input type="text" id="visitPatient" name="patient" maxlength="120" list="patientNames" required>
+            <datalist id="patientNames"></datalist>
+          </div>
+          <div class="field">
+            <label for="visitDate">Дата</label>
+            <input type="date" id="visitDate" name="date" required>
+          </div>
+          <div class="field">
+            <label for="visitType">Тип работы</label>
+            <select id="visitType" name="type">
+              <option value="гигиена">гигиена</option>
+              <option value="кариес">кариес</option>
+              <option value="брекеты">брекеты</option>
+              <option value="коронка">коронка</option>
+              <option value="консультация">консультация</option>
+              <option value="отбел">отбел</option>
+              <option value="другое">другое</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="visitDoctor">Врач</label>
+            <select id="visitDoctor" name="doctor" data-doctors></select>
+          </div>
+          <div class="field">
+            <label for="visitPrice">Цена, ₽</label>
+            <input type="number" id="visitPrice" name="price" min="0" step="100" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label for="visitTooth">Зуб</label>
+            <input type="text" id="visitTooth" name="tooth" maxlength="40">
+          </div>
+          <div class="field field--wide">
+            <label for="visitNote">Диагноз / состояние</label>
+            <input type="text" id="visitNote" name="note" maxlength="500">
+          </div>
+          <div class="admin-form__actions field--wide">
+            <button type="submit" class="btn">Добавить визит</button>
+          </div>
+        </form>
+        <h3 class="admin-subtitle">Последние визиты</h3>
+        <div class="admin-table-wrap" id="visitsTable"></div>
+      </section>
+
+      <!-- ---------- Финансы ---------- -->
+      <section class="admin-panel" data-panel="finance" hidden>
+        <header class="admin-panel__head">
+          <h2>Финансы</h2>
+          <button type="button" class="btn btn--ghost admin-btn-sm" data-reload="finance">Обновить</button>
+        </header>
+        <div class="admin-stats">
+          <div class="admin-stat admin-stat--in">
+            <span class="admin-stat__label">Доходы</span>
+            <span class="admin-stat__value" id="statIncome">—</span>
+          </div>
+          <div class="admin-stat admin-stat--out">
+            <span class="admin-stat__label">Расходы</span>
+            <span class="admin-stat__value" id="statExpense">—</span>
+          </div>
+          <p class="admin-stats__caption" id="statCaption"></p>
+        </div>
+        <form class="admin-form" id="financeForm" novalidate>
+          <div class="field">
+            <label for="finDate">Дата</label>
+            <input type="date" id="finDate" name="date" required>
+          </div>
+          <div class="field">
+            <label for="finCategory">Тип</label>
+            <select id="finCategory" name="category">
+              <option value="доход">доход</option>
+              <option value="расход">расход</option>
+            </select>
+          </div>
+          <div class="field field--wide">
+            <label for="finItem">Статья</label>
+            <input type="text" id="finItem" name="item" maxlength="120" placeholder="Оплата за день, аренда…" required>
+          </div>
+          <div class="field">
+            <label for="finAmount">Сумма, ₽</label>
+            <input type="number" id="finAmount" name="amount" min="0" step="1" inputmode="numeric" required>
+          </div>
+          <div class="field field--wide">
+            <label for="finComment">Комментарий</label>
+            <input type="text" id="finComment" name="comment" maxlength="300">
+          </div>
+          <div class="admin-form__actions field--wide">
+            <button type="submit" class="btn">Добавить</button>
+          </div>
+        </form>
+        <h3 class="admin-subtitle">Последние операции</h3>
+        <div class="admin-table-wrap" id="financeTable"></div>
+      </section>
+
+      <!-- ---------- Пациенты ---------- -->
+      <section class="admin-panel" data-panel="patients" hidden>
+        <header class="admin-panel__head">
+          <h2>Пациенты</h2>
+          <button type="button" class="btn btn--ghost admin-btn-sm" data-reload="patients">Обновить</button>
+        </header>
+        <form class="admin-form" id="patientsForm" novalidate>
+          <div class="field field--wide">
+            <label for="patName">ФИО</label>
+            <input type="text" id="patName" name="name" maxlength="120" required>
+          </div>
+          <div class="field">
+            <label for="patTelegram">Telegram</label>
+            <input type="text" id="patTelegram" name="telegram" maxlength="64" placeholder="@username">
+          </div>
+          <div class="field">
+            <label for="patBirthday">Дата рождения</label>
+            <input type="date" id="patBirthday" name="birthday">
+          </div>
+          <div class="field">
+            <label for="patPhone">Телефон</label>
+            <input type="tel" id="patPhone" name="phone" maxlength="40" inputmode="tel">
+          </div>
+          <div class="field">
+            <label for="patDoctor">Врач</label>
+            <select id="patDoctor" name="doctor" data-doctors></select>
+          </div>
+          <div class="admin-form__actions field--wide">
+            <button type="submit" class="btn">Добавить пациента</button>
+          </div>
+        </form>
+        <div class="field admin-search">
+          <label for="patSearch">Поиск по ФИО</label>
+          <input type="search" id="patSearch" autocomplete="off">
+        </div>
+        <div class="admin-table-wrap" id="patientsTable"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>
